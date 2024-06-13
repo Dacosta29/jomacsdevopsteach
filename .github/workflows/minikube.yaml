@@ -1,0 +1,43 @@
+name: Deploy to Minikube
+
+on:
+  push:
+    branches:
+      - main  # Set this to the branch you want to deploy from
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # - name: Install Minikube
+      #   run: |
+      #     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+      #     sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+      # - name: Start Minikube
+      #   run: |
+      #     minikube start --driver=none
+
+      - name: Build Docker Image
+        run: |
+          eval $(minikube docker-env)
+          docker build -t dacosta29/mario:latest .
+
+      - name: Apply Kubernetes Configurations
+        run: |
+          kubectl apply -f k8s/
+
+      - name: Check Deployment
+        run: |
+          kubectl rollout status deployment/mario-deployment
+
+      - name: Setup Ingress
+        run: |
+          minikube addons enable ingress
+
+      - name: Print service URL
+        run: |
+          minikube service mario-service --url
