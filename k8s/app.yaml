@@ -4,7 +4,7 @@ metadata:
   name: app
   namespace: k8s-app
 spec:
-  replicas: 15
+  replicas: 5
   selector:
     matchLabels:
       name: app
