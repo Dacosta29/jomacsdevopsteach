@@ -40,4 +40,4 @@ jobs:
 
       - name: Print service URL
         run: |
-          minikube service mario-service --url
+          minikube service app-service --url
